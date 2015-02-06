@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 
-import webapp2
-from google.appengine.ext.webapp.util import run_wsgi_app
 import logging
 import os
+
+from google.appengine.ext.webapp.util import run_wsgi_app
 import jinja2
+import webapp2
+
+from client.import_test import print_name
+
+
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
     extensions=['jinja2.ext.autoescape'],
@@ -24,9 +29,10 @@ class MainPage(BaseHandler):
 
 class SayPage(webapp2.RequestHandler):
 
-
     def get(self):
-        logging.critical("============= /say ==============")
+        logging.critical(__file__)
+        logging.critical(__name__)
+        logging.critical(print_name())
         self.response.headers['Content-Type'] = 'text/plain'
         self.response.out.write('ごめんなさい')
 

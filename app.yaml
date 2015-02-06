@@ -1,19 +1,169 @@
-application: aonotestsample
-version: 1
-runtime: python27
-api_version: 1
-threadsafe: yes
+# https://cloud.google.com/appengine/docs/python/config/appconfig
+# google App Engine 設定ファイル
+# 文字コードはUTF-8
+# インデントは半角スペース2文字
+# 必須項目
+application: aonotestsample # アプリケーション名(GAEコンソール側と同名-固有識別子）
 
+# 必須項目
+version: 0-1-dev # アプリケーションのバージョンNo
+# バージョンごとにgoogleがアプリケーションのバックアップを持つ。過去バージョンへのロールバック可能
+# 例 2-0-testなど
+
+# 必須項目
+runtime: python27 # 実行時（GAE上）のruntime python利用時は「python27」と記述
+
+# 必須項目
+api_version: 1 # 実行時に利用するAPI（google提供）バージョン。現在、python27では「1」のみ
+
+# 必須項目
+threadsafe: yes # このアプリケーションがスレッドセーフで設計されているか否か
+
+# 必須項目
+# 受け付けるurlパターン及び処理方法の設定
+# 複数記述可（上から順に評価される。）
+# アプリケーションの実行 or css or javaScript等の静的コンテンツの返却など
+# ハンドラの種類は2つ
+# 1,スクリプトハンドラ=urlに対する応答をスクリプトで行う
+# 2,静的ファイルハンドラ=urlに対する応答として静的ファイルを返す
 handlers:
-- url: /favicon\.ico
-  static_files: favicon.ico
-  upload: favicon\.ico
+# 静的ファイルハンドラ
+# 静的ファイルハンドラの指定方法は2つ（フォルダ指定と特定ファイル指定）
+# ディレクトリ指定
+# handlers:
+# All URLs beginning with /stylesheets are treated as paths to static files in
+# the stylesheets/ directory.
+# - url: /stylesheets
+#   static_dir: stylesheets
+# url : url指定、正規表現
+# static_dir : アプリのルートから静的ファイルを含むディレクトリのパス（このディレクトリ
+- url: /img
+  static_dir: img
+#  application_readable: true #アプリケーション側で読めるかどうか 任意
+  mime_type: image # 任意 指定がない場合は拡張子から判断される
+#  http_headers: 応答時に指定するヘッダ
+#  外部にコンテンツを公開する場合
+# http_headers:
+#     Access-Control-Allow-Origin: http://mygame.appspot.com
+#  expiration: "4d 5h" # キャッシュ有効期限。未設定の場合はデフォルトが使用される  
+
+# 静的ファイルパターン（urlと特定のファイルをひもづける） 正規表現
+- url: /favicon\.ico # url 正規表現
+  static_files: favicon.ico # ファイル名（ルートからフルパス）
+  upload: favicon\.ico # 正規表現に一致するファイルだけ、GAEサーバーにアップロードする http://d.hatena.ne.jp/matsuza/20080413/1208092235
+#  application_readable: true #アプリケーション側で読めるかどうか 任意
+  mime_type: image # 任意 指定がない場合は拡張子から判断される
+#  http_headers: 応答時に指定するヘッダ
+#  expiration: "4d 5h" # キャッシュ有効期限。未設定の場合はデフォルトが使用される  
 
 - url: /.*
   script: main.application
+  
+# スクリプトHandlerについて
+# urlパターンに応じてスクリプトを実行する
+# urlは正規表現
+# -url: / rootフォルダ、他にマッチしなかった場合
+# script:hoge.app
 
+# The URL /index.html is also handled by the home.py script.
+# - url: /index\.html
+#   script: home.app
+    
+# All other URLs use the not_found.py script.
+# - url: /.*
+#   script: not_found.app
+  
+  
+# urlの予約語
+# /_ah/
+# /form
+
+# https通信をする場合
+# - url: /youraccount/.*
+#   script: accounts.py
+#   login: required option(どちらでもよい）,requird(必須）,admin(管理者のみ）
+#   secure: always always(常にhttps),option(選択可能）、never(常にhttp)
+#   auth_fail_action: unauthorized ログイン失敗時 redirect:googleログインページにリダイレクト  unauthorized:401エラー表示
+  
+# handlersで$PYTHON_LIBが利用できます。
+# handlers:
+# - url: /admin/.*
+#   script: $PYTHON_LIB/google/appengine/ext/admin
+#   login: admin
+
+# 任意項目
+# yamlファイルを分割する際などに利用。include側にhandlerを記述するとそちらで読む
+# パターンが増えてきた時などに、機能グループ等で分割するとかに利用
+# その他任意のライブラリ・モジュールを組み込むことができます。
+includes:
+- client/test.yaml
+
+# 任意項目
+# サードパーティ製のライブラリのりよう設定
 libraries:
 - name: webapp2
-  version: latest
+  version: latest # 最新
 - name: jinja2
   version: latest
+#  version: "1.2.2" バージョン指定
+  
+# 任意項目
+# Cashの有効期限について
+# アプリケーション全体のCashの有効期限（スクリプト側で適切なHttpヘッダを返すことで個別キャッシュ機関を設定可能）
+# 日=d 時間=h 分=m 秒=s スペース区切り 4d 3h 10m 5sだと4日と3時間10分5秒後にキャッシュを削除する（デフォルトは10分）
+# 殆どの場合デフォルトの10分で問題ない
+default_expiration: "4d 5h"
+
+# BuiltinHandler
+# 定義済みHandler
+# 使い方がよーわからんので調査
+builtins:
+- admin_redirect: on # 管理コンソールにリダイレクトされる
+- appstats: on # _アプリケーションのパフォーマンス測定に使用する。利用するためにはeventRecorderをインストールする必要あり。
+- deferred: on # _ah/queue/deferrd defferd.defer()が利用できるようになる（要調査）
+- remote_api: on # _ah/remote_api remote_apiを使えばGoogle App EngineのDatastoreをローカルのコマンドプロンプトから操作出来るように出来る。http://d.hatena.ne.jp/furyu-tei/20110512/1305202928
+# - default
+# - django_wsgi
+
+# googleAppEngineにアップリードされるべきでないファイルの設定
+skip_files:
+- ^(.*/)?\.bak$ # 直値及び正規表現
+
+# 環境変数（os.environ)に値を追加する
+env_variables:
+  DJANGO_SETTINGS_MODULE: 'myapp.settings'
+
+# メール受信、xmppメッセージ受信設定
+inbound_services:
+  - mail # メール受信
+  - channel_presence # 
+  - xmpp_message # インスタントメッセージ受け取り
+  - xmpp_presence # チャット受け取り
+  - xmpp_subscribe # 記事を受け取る
+  - warmup # ウォームアップメッセージ受け取り
+
+
+# appcfg.pyはGOOGLE_APP_ENGINEの下。（google app engineデプロイ時に利用する設定ファイル）
+# pythonは通常事前コンパイルさているが、appcfg.py内に--no_precompilationをつけると事前コンパイルを止めることができる。
+
+
+# 管理コンソール
+# admin_console:
+#   pages:
+#   - name: Blog Comment Admin
+#     url: /blog/admin/comments
+#   - name: Create a Blog Post
+#     url: /blog/admin/newentry
+
+# エラーのカスタマイズ
+# error_handlers:
+#   - file: default_error.html # デフォルト
+# 
+#   - error_code: over_quota # エラーコード毎 応答パスは静的ファイルハンドラと重複しないこと
+#     file: over_quota.html
+
+#   - error_code: over_quota そのアプリは、リソース割り当て量を超過したことを示します。
+#   - error_code: dos_api_denial https://cloud.google.com/appengine/docs/python/config/dos
+#   - error_code: timeout タイムアウト
+# エラーコードはオプション。基本はデフォルトエラーが返却される
+
