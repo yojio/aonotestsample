@@ -6,7 +6,7 @@
 application: aonotestsample # アプリケーション名(GAEコンソール側と同名-固有識別子）
 
 # 必須項目
-version: 0-1-dev # アプリケーションのバージョンNo
+version: 0-2-dev # アプリケーションのバージョンNo
 # バージョンごとにgoogleがアプリケーションのバックアップを持つ。過去バージョンへのロールバック可能
 # 例 2-0-testなど
 
@@ -45,7 +45,7 @@ handlers:
 #  外部にコンテンツを公開する場合
 # http_headers:
 #     Access-Control-Allow-Origin: http://mygame.appspot.com
-#  expiration: "4d 5h" # キャッシュ有効期限。未設定の場合はデフォルトが使用される  
+#  expiration: "4d 5h" # キャッシュ有効期限。未設定の場合はデフォルトが使用される
 
 # 静的ファイルパターン（urlと特定のファイルをひもづける） 正規表現
 - url: /favicon\.ico # url 正規表現
@@ -54,11 +54,11 @@ handlers:
 #  application_readable: true #アプリケーション側で読めるかどうか 任意
   mime_type: image # 任意 指定がない場合は拡張子から判断される
 #  http_headers: 応答時に指定するヘッダ
-#  expiration: "4d 5h" # キャッシュ有効期限。未設定の場合はデフォルトが使用される  
+#  expiration: "4d 5h" # キャッシュ有効期限。未設定の場合はデフォルトが使用される
 
 - url: /.*
   script: main.application
-  
+
 # スクリプトHandlerについて
 # urlパターンに応じてスクリプトを実行する
 # urlは正規表現
@@ -68,12 +68,12 @@ handlers:
 # The URL /index.html is also handled by the home.py script.
 # - url: /index\.html
 #   script: home.app
-    
+
 # All other URLs use the not_found.py script.
 # - url: /.*
 #   script: not_found.app
-  
-  
+
+
 # urlの予約語
 # /_ah/
 # /form
@@ -84,7 +84,7 @@ handlers:
 #   login: required option(どちらでもよい）,requird(必須）,admin(管理者のみ）
 #   secure: always always(常にhttps),option(選択可能）、never(常にhttp)
 #   auth_fail_action: unauthorized ログイン失敗時 redirect:googleログインページにリダイレクト  unauthorized:401エラー表示
-  
+
 # handlersで$PYTHON_LIBが利用できます。
 # handlers:
 # - url: /admin/.*
@@ -106,7 +106,7 @@ libraries:
 - name: jinja2
   version: latest
 #  version: "1.2.2" バージョン指定
-  
+
 # 任意項目
 # Cashの有効期限について
 # アプリケーション全体のCashの有効期限（スクリプト側で適切なHttpヘッダを返すことで個別キャッシュ機関を設定可能）
@@ -136,7 +136,7 @@ env_variables:
 # メール受信、xmppメッセージ受信設定
 inbound_services:
   - mail # メール受信
-  - channel_presence # 
+  - channel_presence #
   - xmpp_message # インスタントメッセージ受け取り
   - xmpp_presence # チャット受け取り
   - xmpp_subscribe # 記事を受け取る
@@ -158,7 +158,7 @@ inbound_services:
 # エラーのカスタマイズ
 # error_handlers:
 #   - file: default_error.html # デフォルト
-# 
+#
 #   - error_code: over_quota # エラーコード毎 応答パスは静的ファイルハンドラと重複しないこと
 #     file: over_quota.html
 
