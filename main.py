@@ -34,7 +34,7 @@ class SayPage(webapp2.RequestHandler):
         logging.critical(__name__)
         logging.critical(print_name())
         self.response.headers['Content-Type'] = 'text/plain'
-        self.response.out.write('ごめんなさい')
+        self.response.out.write('ごめんなさい!!!!!!')
 
 
 application = webapp2.WSGIApplication([
